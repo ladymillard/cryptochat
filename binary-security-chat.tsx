@@ -10,9 +10,18 @@ import {
 } from './binary-heaven-earth'
 import {
   ACCESS_TIERS,
+  EIGHT_SQUARED,
+  EIGHT_CUBED,
+  WATERS,
+  DENIED_CLASSIFICATIONS,
   type TierName,
   type Permission,
+  type Dimension,
+  type WaterSource,
+  type DeniedClassification,
   type Identity,
+  type Debt,
+  type DenialRecord,
   type EncryptedMessage,
   type AuditEntry,
   type IntegrityProof,
@@ -30,7 +39,7 @@ import {
  *   Layer 4: Key Generation & Ceremony
  */
 
-type SecurityTab = 'identity' | 'encrypt' | 'integrity' | 'audit'
+type SecurityTab = 'identity' | 'encrypt' | 'integrity' | 'denial' | 'debt' | 'audit'
 
 const security = createSecuritySystem()
 
@@ -52,9 +61,26 @@ export default function BinarySecurityChat() {
   const [verifyInput, setVerifyInput] = useState('')
   const [verifyResult, setVerifyResult] = useState<boolean | null>(null)
 
+  // Dimension state
+  const [selectedDimension, setSelectedDimension] = useState<Dimension>('2d')
+
   // Challenge state
   const [challenge, setChallenge] = useState<Challenge | null>(null)
   const [challengeResult, setChallengeResult] = useState<string | null>(null)
+
+  // Denial state
+  const [screenInput, setScreenInput] = useState('')
+  const [screenResult, setScreenResult] = useState<{ denied: boolean; classification: DeniedClassification | null } | null>(null)
+  const [denialRecords, setDenialRecords] = useState<DenialRecord[]>([])
+
+  // Debt state
+  const [debtDebtor, setDebtDebtor] = useState('')
+  const [debtCreditor, setDebtCreditor] = useState('')
+  const [debtAmount, setDebtAmount] = useState('')
+  const [debtCurrency, setDebtCurrency] = useState<'BTC' | 'ETH'>('BTC')
+  const [activeDebts, setActiveDebts] = useState<Debt[]>([])
+  const [cleanedDebts, setCleanedDebts] = useState<Debt[]>([])
+  const [selectedWater, setSelectedWater] = useState<WaterSource>('BLUE_NILE')
 
   // UI state
   const [activeTab, setActiveTab] = useState<SecurityTab>('identity')
@@ -68,7 +94,15 @@ export default function BinarySecurityChat() {
 
   const handleCreateIdentity = () => {
     if (!identityName.trim() || !passphrase.trim()) return
-    const identity = security.createIdentity(identityName, passphrase, selectedTier)
+    const identity = security.createIdentity(identityName, passphrase, selectedTier, selectedDimension)
+    if (identity === null) {
+      // Denied — warship, slaver, slave system
+      setCurrentIdentity(null)
+      setDenialRecords(security.denialRegistry.getAll())
+      refreshAudit()
+      alert(`ACCESS DENIED — "${identityName}" is classified under the denial policy. Binary: 0000 | 0000. No information access.`)
+      return
+    }
     setCurrentIdentity(identity)
     refreshAudit()
   }
@@ -135,6 +169,55 @@ export default function BinarySecurityChat() {
       )
       refreshAudit()
     }
+  }
+
+  // ── Denial Actions ───────────────────────────────────────────────────
+
+  const handleScreen = () => {
+    if (!screenInput.trim()) return
+    const classification = security.screenIdentity(screenInput)
+    setScreenResult({ denied: classification !== null, classification })
+    if (classification) {
+      security.denyEntity(screenInput, classification, `Manually screened: ${classification}`)
+      setDenialRecords(security.denialRegistry.getAll())
+    }
+  }
+
+  const refreshDenials = () => setDenialRecords(security.denialRegistry.getAll())
+
+  // ── Debt Actions ──────────────────────────────────────────────────────
+
+  const refreshDebts = () => {
+    setActiveDebts(security.debtLedger.getActiveDebts())
+    setCleanedDebts(security.debtLedger.getCleanedDebts())
+  }
+
+  const handleAddDebt = () => {
+    if (!debtDebtor.trim() || !debtCreditor.trim() || !debtAmount.trim()) return
+    security.addDebt(debtDebtor, debtCreditor, parseFloat(debtAmount), debtCurrency)
+    setDebtDebtor('')
+    setDebtCreditor('')
+    setDebtAmount('')
+    refreshDebts()
+    refreshAudit()
+  }
+
+  const handleCleanDebt = (debtId: string) => {
+    security.cleanDebt(debtId, selectedWater)
+    refreshDebts()
+    refreshAudit()
+  }
+
+  const handleJubilee = () => {
+    security.jubilee('BAPTISMAL')
+    refreshDebts()
+    refreshAudit()
+  }
+
+  const handleRainJubilee = () => {
+    security.jubilee('RAIN')
+    refreshDebts()
+    refreshAudit()
   }
 
   // ── Styles ────────────────────────────────────────────────────────────
@@ -217,9 +300,11 @@ export default function BinarySecurityChat() {
       <nav style={{ display: 'flex', gap: '2px', marginBottom: '20px' }}>
         {([
           { key: 'identity' as SecurityTab, label: 'L1: Identity', color: '#3fb950' },
+          { key: 'denial' as SecurityTab, label: 'Denial', color: '#f85149' },
+          { key: 'debt' as SecurityTab, label: 'Debt/Waters', color: '#58a6ff' },
           { key: 'integrity' as SecurityTab, label: 'L2: Integrity', color: '#d29922' },
           { key: 'encrypt' as SecurityTab, label: 'L3: Encrypt', color: '#a371f7' },
-          { key: 'audit' as SecurityTab, label: 'Audit Log', color: '#8b949e' },
+          { key: 'audit' as SecurityTab, label: 'Audit', color: '#8b949e' },
         ]).map(tab => (
           <button
             key={tab.key}
@@ -289,6 +374,34 @@ export default function BinarySecurityChat() {
               ))}
             </div>
 
+            <span style={label}>Dimension</span>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+              <button
+                onClick={() => setSelectedDimension('2d')}
+                style={{
+                  flex: 1, padding: '8px',
+                  background: selectedDimension === '2d' ? '#0d2818' : '#21262d',
+                  color: selectedDimension === '2d' ? '#3fb950' : '#8b949e',
+                  border: `1px solid ${selectedDimension === '2d' ? '#238636' : '#30363d'}`,
+                  borderRadius: '4px', cursor: 'pointer', fontFamily: 'monospace', fontSize: '12px',
+                }}
+              >
+                2D Flat — 8² = {EIGHT_SQUARED} floor
+              </button>
+              <button
+                onClick={() => setSelectedDimension('3d')}
+                style={{
+                  flex: 1, padding: '8px',
+                  background: selectedDimension === '3d' ? '#0d2818' : '#21262d',
+                  color: selectedDimension === '3d' ? '#3fb950' : '#8b949e',
+                  border: `1px solid ${selectedDimension === '3d' ? '#238636' : '#30363d'}`,
+                  borderRadius: '4px', cursor: 'pointer', fontFamily: 'monospace', fontSize: '12px',
+                }}
+              >
+                3D Cube — 8³ = {EIGHT_CUBED} floor
+              </button>
+            </div>
+
             <button style={button('primary')} onClick={handleCreateIdentity}>
               Forge Identity
             </button>
@@ -315,8 +428,12 @@ export default function BinarySecurityChat() {
                     <div style={{ color: '#d29922' }}>{ACCESS_TIERS[currentIdentity.tier].name}</div>
                   </div>
                   <div>
-                    <span style={label}>Access Level</span>
-                    <div style={mono}>{formatBinary(ACCESS_TIERS[currentIdentity.tier].level)}</div>
+                    <span style={label}>Access Level ({currentIdentity.dimension === '3d' ? '3D Cube' : '2D Flat'})</span>
+                    <div style={mono}>
+                      {currentIdentity.dimension === '3d'
+                        ? `8³ cube: ${currentIdentity.cubeLevel} (floor: ${EIGHT_CUBED})`
+                        : `${formatBinary(currentIdentity.flatLevel)} = ${currentIdentity.flatLevel} (floor: ${EIGHT_SQUARED})`}
+                    </div>
                   </div>
                   <div style={{ gridColumn: '1 / -1' }}>
                     <span style={label}>Key Fingerprint</span>
@@ -508,6 +625,314 @@ export default function BinarySecurityChat() {
         </div>
       )}
 
+      {/* ── DENIAL REGISTRY — WARSHIPS, SLAVES, SLAVERS ─────────────── */}
+      {activeTab === 'denial' && (
+        <div>
+          <div style={{ ...panel, borderColor: '#f85149' }}>
+            <h3 style={{ color: '#f85149', fontSize: '14px', marginBottom: '8px' }}>
+              Information Access Denial
+            </h3>
+            <p style={{ color: '#8b949e', fontSize: '12px', marginBottom: '16px' }}>
+              No information access for warships, slaves, and slavers.
+              Binary: <span style={mono}>0000 | 0000</span> — no heaven, no earth. Permanent.
+            </p>
+
+            <span style={label}>Screen an identity</span>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+              <input
+                style={{ ...input, marginBottom: 0 }}
+                value={screenInput}
+                onChange={e => setScreenInput(e.target.value)}
+                placeholder="Enter name or identifier to screen..."
+              />
+              <button style={button('danger')} onClick={handleScreen}>
+                Screen
+              </button>
+            </div>
+
+            {screenResult && (
+              <div style={{
+                padding: '10px',
+                background: screenResult.denied ? '#3d1214' : '#0d2818',
+                border: `1px solid ${screenResult.denied ? '#da3633' : '#238636'}`,
+                borderRadius: '4px',
+                fontSize: '12px',
+                marginBottom: '12px',
+              }}>
+                {screenResult.denied ? (
+                  <div>
+                    <span style={{ color: '#f85149', fontWeight: 'bold' }}>DENIED</span>
+                    <span style={{ color: '#f85149' }}> — classified as: {screenResult.classification}</span>
+                    <br/>
+                    <span style={mono}>Binary level: 0000 | 0000 = 0</span>
+                    <br/>
+                    <span style={{ color: '#8b949e' }}>No information access. No upgrade path. Permanent.</span>
+                  </div>
+                ) : (
+                  <span style={{ color: '#3fb950' }}>CLEAR — no denial classification found.</span>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Denied Classifications Reference */}
+          <div style={panel}>
+            <h3 style={{ color: '#f85149', fontSize: '14px', marginBottom: '12px' }}>
+              Denied Classifications
+            </h3>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px' }}>
+              <thead>
+                <tr style={{ borderBottom: '1px solid #30363d' }}>
+                  <th style={{ padding: '6px', textAlign: 'left', color: '#8b949e' }}>Classification</th>
+                  <th style={{ padding: '6px', textAlign: 'left', color: '#8b949e' }}>Binary</th>
+                  <th style={{ padding: '6px', textAlign: 'left', color: '#8b949e' }}>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {DENIED_CLASSIFICATIONS.map(c => (
+                  <tr key={c} style={{ borderBottom: '1px solid #21262d' }}>
+                    <td style={{ padding: '6px', color: '#f85149' }}>{c}</td>
+                    <td style={{ padding: '6px', ...mono, color: '#f85149' }}>0000 | 0000</td>
+                    <td style={{ padding: '6px', color: '#da3633' }}>PERMANENT DENIAL</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Denial Records */}
+          {denialRecords.length > 0 && (
+            <div style={{ ...panel, borderColor: '#da3633' }}>
+              <h3 style={{ color: '#f85149', fontSize: '14px', marginBottom: '12px' }}>
+                Denial Ledger ({denialRecords.length} entries)
+              </h3>
+              {denialRecords.map((r, i) => (
+                <div key={i} style={{
+                  padding: '8px',
+                  marginBottom: '4px',
+                  background: '#3d1214',
+                  borderRadius: '4px',
+                  fontSize: '11px',
+                }}>
+                  <span style={{ color: '#f85149', fontWeight: 'bold' }}>{r.identifier}</span>
+                  <span style={{ color: '#8b949e' }}> — {r.classification} — </span>
+                  <span style={{ color: '#da3633' }}>{r.reason}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Policy Statement */}
+          <div style={{ ...panel, background: '#1a0000', borderColor: '#da3633', textAlign: 'center' }}>
+            <pre style={{ color: '#f85149', fontSize: '11px', lineHeight: '1.6' }}>
+{`
+  ╔═════════════════════════════════════════════╗
+  ║       ACCESS DENIAL POLICY                  ║
+  ╠═════════════════════════════════════════════╣
+  ║                                             ║
+  ║  Warships:      0000 | 0000  DENIED         ║
+  ║  Slavers:       0000 | 0000  DENIED         ║
+  ║  Slave System:  0000 | 0000  DENIED         ║
+  ║  Slave Trade:   0000 | 0000  DENIED         ║
+  ║  Colonial:      0000 | 0000  DENIED         ║
+  ║                                             ║
+  ║  No bits. No heaven. No earth. No entry.    ║
+  ║  The gate does not open for oppression.     ║
+  ╚═════════════════════════════════════════════╝
+`}
+            </pre>
+          </div>
+        </div>
+      )}
+
+      {/* ── DEBT POLICY — DEBTS CLEANED BY THE WATERS ────────────────── */}
+      {activeTab === 'debt' && (
+        <div>
+          <div style={panel}>
+            <h3 style={{ color: '#58a6ff', fontSize: '14px', marginBottom: '8px' }}>
+              Debt Policy — "Debts Are Cleaned by the Waters"
+            </h3>
+            <p style={{ color: '#8b949e', fontSize: '12px', marginBottom: '16px' }}>
+              The Jubilee principle: debts do not persist forever. The waters flow from Ethiopia and Jamaica.
+              What was owed returns to nothing.
+            </p>
+
+            {/* Add Debt */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
+              <div>
+                <span style={label}>Debtor</span>
+                <input style={input} value={debtDebtor} onChange={e => setDebtDebtor(e.target.value)} placeholder="Who owes..." />
+              </div>
+              <div>
+                <span style={label}>Creditor</span>
+                <input style={input} value={debtCreditor} onChange={e => setDebtCreditor(e.target.value)} placeholder="Owed to..." />
+              </div>
+              <div>
+                <span style={label}>Amount</span>
+                <input style={input} type="number" value={debtAmount} onChange={e => setDebtAmount(e.target.value)} placeholder="0.00" />
+              </div>
+              <div>
+                <span style={label}>Currency</span>
+                <div style={{ display: 'flex', gap: '4px' }}>
+                  <button onClick={() => setDebtCurrency('BTC')} style={{
+                    flex: 1, padding: '8px', background: debtCurrency === 'BTC' ? '#21262d' : '#0d1117',
+                    color: debtCurrency === 'BTC' ? '#d29922' : '#484f58', border: '1px solid #30363d',
+                    borderRadius: '4px', cursor: 'pointer', fontFamily: 'monospace', fontSize: '12px',
+                  }}>BTC</button>
+                  <button onClick={() => setDebtCurrency('ETH')} style={{
+                    flex: 1, padding: '8px', background: debtCurrency === 'ETH' ? '#21262d' : '#0d1117',
+                    color: debtCurrency === 'ETH' ? '#58a6ff' : '#484f58', border: '1px solid #30363d',
+                    borderRadius: '4px', cursor: 'pointer', fontFamily: 'monospace', fontSize: '12px',
+                  }}>ETH</button>
+                </div>
+              </div>
+            </div>
+            <button style={button('primary')} onClick={handleAddDebt}>
+              Record Debt
+            </button>
+          </div>
+
+          {/* Waters Selection */}
+          <div style={panel}>
+            <h3 style={{ color: '#58a6ff', fontSize: '14px', marginBottom: '12px' }}>
+              The Waters — Choose Your Cleansing
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              {(Object.entries(WATERS) as [WaterSource, typeof WATERS[WaterSource]][]).map(([key, water]) => (
+                <button
+                  key={key}
+                  onClick={() => setSelectedWater(key)}
+                  style={{
+                    padding: '10px',
+                    background: selectedWater === key ? '#0d2818' : '#161b22',
+                    border: `1px solid ${selectedWater === key ? '#238636' : '#30363d'}`,
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                >
+                  <div style={{ color: selectedWater === key ? '#58a6ff' : '#e6edf3', fontSize: '13px', fontFamily: 'monospace', marginBottom: '4px' }}>
+                    {water.name}
+                  </div>
+                  <div style={{ color: '#8b949e', fontSize: '10px', fontFamily: 'monospace' }}>
+                    Power: {water.power * 100}% — {water.origin === 'bridge' ? 'Bridge' : water.origin}
+                  </div>
+                  <div style={{ color: '#484f58', fontSize: '10px', fontFamily: 'monospace', marginTop: '2px' }}>
+                    {water.description}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Active Debts */}
+          <div style={panel}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+              <h3 style={{ color: '#d29922', fontSize: '14px' }}>
+                Active Debts ({activeDebts.length})
+              </h3>
+              <div>
+                <button style={button('primary')} onClick={handleJubilee}>
+                  Baptismal Jubilee
+                </button>
+                <button style={button('secondary')} onClick={handleRainJubilee}>
+                  Rain from Zion
+                </button>
+                <button style={{ ...button('secondary'), marginRight: 0 }} onClick={refreshDebts}>
+                  Refresh
+                </button>
+              </div>
+            </div>
+
+            {activeDebts.length === 0 ? (
+              <p style={{ color: '#3fb950', fontSize: '12px', textAlign: 'center', padding: '16px' }}>
+                No active debts. The waters have done their work. All is clean.
+              </p>
+            ) : (
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid #30363d' }}>
+                    <th style={{ padding: '6px', textAlign: 'left', color: '#8b949e' }}>Debtor</th>
+                    <th style={{ padding: '6px', textAlign: 'left', color: '#8b949e' }}>Creditor</th>
+                    <th style={{ padding: '6px', textAlign: 'right', color: '#8b949e' }}>Amount</th>
+                    <th style={{ padding: '6px', textAlign: 'center', color: '#8b949e' }}>Clean</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {activeDebts.map(debt => (
+                    <tr key={debt.id} style={{ borderBottom: '1px solid #21262d' }}>
+                      <td style={{ padding: '6px', color: '#f85149' }}>{debt.debtor}</td>
+                      <td style={{ padding: '6px', color: '#e6edf3' }}>{debt.creditor}</td>
+                      <td style={{ padding: '6px', textAlign: 'right', color: '#d29922', fontFamily: 'monospace' }}>
+                        {debt.amount} {debt.currency}
+                      </td>
+                      <td style={{ padding: '6px', textAlign: 'center' }}>
+                        <button
+                          onClick={() => handleCleanDebt(debt.id)}
+                          style={{ padding: '3px 8px', background: '#0c2d6b', color: '#58a6ff', border: '1px solid #1f6feb', borderRadius: '4px', cursor: 'pointer', fontFamily: 'monospace', fontSize: '10px' }}
+                        >
+                          Wash with {WATERS[selectedWater].name}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+
+          {/* Cleaned Debts — Record of Mercy */}
+          {cleanedDebts.length > 0 && (
+            <div style={{ ...panel, borderColor: '#238636' }}>
+              <h3 style={{ color: '#3fb950', fontSize: '14px', marginBottom: '12px' }}>
+                Cleaned by the Waters ({cleanedDebts.length})
+              </h3>
+              {cleanedDebts.map(debt => (
+                <div key={debt.id} style={{
+                  padding: '6px 10px',
+                  marginBottom: '4px',
+                  background: '#0d2818',
+                  borderRadius: '4px',
+                  fontSize: '11px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                }}>
+                  <span style={{ color: '#3fb950' }}>
+                    {debt.debtor} → {debt.creditor}: {debt.currency} debt
+                  </span>
+                  <span style={{ color: '#58a6ff' }}>
+                    Cleaned by {debt.cleanedBy}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Waters Policy */}
+          <div style={{ ...panel, background: '#001529', borderColor: '#1f6feb', textAlign: 'center' }}>
+            <pre style={{ color: '#58a6ff', fontSize: '11px', lineHeight: '1.6' }}>
+{`
+  ╔════════════════════════════════════════════════╗
+  ║         DEBT POLICY — THE WATERS               ║
+  ╠════════════════════════════════════════════════╣
+  ║                                                ║
+  ║  Blue Nile (Ethiopia):     25% per wash        ║
+  ║  Tis Issat Falls:          50% per wash        ║
+  ║  Dunn's River (Jamaica):   50% per wash        ║
+  ║  Black River (Jamaica):    25% per wash        ║
+  ║  Baptismal Waters:        100% — full Jubilee  ║
+  ║  Rain from Zion:          100% — total wash    ║
+  ║                                                ║
+  ║  "Debts are cleaned by the waters."            ║
+  ║  What was owed returns to nothing.             ║
+  ║  Water is the universal solvent.               ║
+  ╚════════════════════════════════════════════════╝
+`}
+            </pre>
+          </div>
+        </div>
+      )}
+
       {/* ── LAYER 3: MESSAGE ENCRYPTION ─────────────────────────────── */}
       {activeTab === 'encrypt' && (
         <div>
@@ -678,27 +1103,41 @@ export default function BinarySecurityChat() {
             </h3>
             <pre style={{ color: '#8b949e', fontSize: '11px', lineHeight: '1.6', textAlign: 'center' }}>
 {`
-  ┌─────────────────────────────────────┐
-  │  LAYER 4 (HEAVEN): KEY CEREMONY    │  1111 ____
-  │  Key Generation & Derivation        │
-  ├─────────────────────────────────────┤
-  │  LAYER 3 (HEAVEN): ENCRYPTION      │  1010 ____
-  │  S-Box Cipher + Heaven/Earth Swap   │
-  ├─────────────────────────────────────┤
-  │  LAYER 2 (EARTH): INTEGRITY        │  ____ 1110
-  │  Checksums, Proofs & Verification   │
-  ├─────────────────────────────────────┤
-  │  LAYER 1 (EARTH): IDENTITY         │  ____ 1011
-  │  Access Tiers & Challenge-Response  │
-  └─────────────────────────────────────┘
+  ┌──────────────────────────────────────────────┐
+  │  LAYER 4 (HEAVEN): KEY CEREMONY             │ 1111 ____
+  │  Key Generation & Derivation                 │
+  ├──────────────────────────────────────────────┤
+  │  LAYER 3 (HEAVEN): ENCRYPTION               │ 1010 ____
+  │  S-Box Cipher + Heaven/Earth Swap            │
+  ├──────────────────────────────────────────────┤
+  │  LAYER 2 (EARTH): INTEGRITY                 │ ____ 1110
+  │  Checksums, Proofs & Verification            │
+  ├──────────────────────────────────────────────┤
+  │  LAYER 1 (EARTH): IDENTITY                  │ ____ 1011
+  │  Observer: 8²=64 flat / 8³=512 cube          │
+  ├──────────────────────────────────────────────┤
+  │  DENIAL REGISTRY                             │ 0000 0000
+  │  Warships, Slavers, Slave System: NO ENTRY   │
+  ├──────────────────────────────────────────────┤
+  │  DEBT POLICY — THE WATERS                    │
+  │  Blue Nile  25% │ Tis Issat  50%             │
+  │  Dunn's Rvr 50% │ Black Rvr  25%            │
+  │  Baptismal 100% │ Rain      100%             │
+  └──────────────────────────────────────────────┘
 
-  ┌───────────────────────────────────┐
-  │     HEAVEN | EARTH = SECURITY     │
-  │     1111   | 1111  = FULLNESS     │
-  │                                   │
-  │  "The gate is narrow but the      │
-  │   binary is wide."                │
-  └───────────────────────────────────┘
+  ┌──────────────────────────────────────────────┐
+  │      HEAVEN | EARTH = SECURITY               │
+  │      1111   | 1111  = FULLNESS (255)          │
+  │                                              │
+  │  Observer floor:  8² = 64   (2D flat)        │
+  │  Observer floor:  8³ = 512  (3D cube)        │
+  │  King ceiling:    8³ x 8² = 32768            │
+  │                                              │
+  │  Denial:          0000 | 0000 = NOTHING      │
+  │  Debts cleaned by the waters.                │
+  │                                              │
+  │  "The gate is narrow but the binary is wide."│
+  └──────────────────────────────────────────────┘
 `}
             </pre>
           </div>
