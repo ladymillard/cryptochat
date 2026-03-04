@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Binary for Heaven on Earth — White Paper</title>
+<style>
+  @page { margin: 1in; size: letter; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 11pt;
+    line-height: 1.7;
+    color: #1a1a1a;
+    max-width: 8.5in;
+    margin: 0 auto;
+    padding: 1in;
+    background: #fff;
+  }
+  h1 { font-size: 22pt; text-align: center; margin-bottom: 4pt; color: #0a0a0a; letter-spacing: 1px; }
+  h2 { font-size: 14pt; margin-top: 28pt; margin-bottom: 10pt; color: #1a1a2e; border-bottom: 1px solid #ccc; padding-bottom: 4pt; }
+  h3 { font-size: 12pt; margin-top: 18pt; margin-bottom: 6pt; color: #333; }
+  p { margin-bottom: 10pt; text-align: justify; }
+  .subtitle { text-align: center; font-size: 12pt; color: #555; margin-bottom: 6pt; }
+  .date { text-align: center; font-size: 10pt; color: #888; margin-bottom: 30pt; }
+  .authors { text-align: center; font-size: 10pt; color: #666; margin-bottom: 8pt; }
+  .epigraph { font-style: italic; text-align: center; color: #555; margin: 20pt 40pt; padding: 12pt; border-left: 3px solid #999; }
+  .abstract { background: #f9f9f9; padding: 14pt; margin: 16pt 0; border-radius: 4pt; }
+  .abstract h3 { margin-top: 0; color: #1a1a2e; }
+  table { width: 100%; border-collapse: collapse; margin: 12pt 0; font-size: 10pt; }
+  th, td { padding: 6pt 8pt; border: 1px solid #ddd; text-align: left; }
+  th { background: #1a1a2e; color: #fff; font-weight: normal; }
+  .mono { font-family: 'Courier New', monospace; font-size: 10pt; }
+  .binary { font-family: 'Courier New', monospace; font-size: 10pt; color: #1a1a2e; font-weight: bold; }
+  .denied { color: #c00; font-weight: bold; }
+  .water { color: #0066cc; }
+  pre {
+    font-family: 'Courier New', monospace;
+    font-size: 9pt;
+    background: #f4f4f4;
+    padding: 12pt;
+    margin: 12pt 0;
+    border: 1px solid #ddd;
+    border-radius: 3pt;
+    overflow-x: auto;
+    line-height: 1.5;
+  }
+  .section-num { color: #888; font-size: 10pt; }
+  .page-break { page-break-before: always; }
+  .toc { margin: 16pt 0; }
+  .toc a { color: #1a1a2e; text-decoration: none; }
+  .toc li { margin-bottom: 4pt; list-style: none; }
+  .toc li::before { content: none; }
+  .footer { margin-top: 40pt; padding-top: 12pt; border-top: 1px solid #ccc; text-align: center; font-size: 9pt; color: #888; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16pt; }
+  .highlight-box {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    padding: 14pt;
+    border-radius: 4pt;
+    margin: 12pt 0;
+    font-family: 'Courier New', monospace;
+    font-size: 10pt;
+    text-align: center;
+  }
+  .highlight-box .big { font-size: 14pt; color: #4fc3f7; }
+  .policy-box {
+    border: 2px solid #c00;
+    padding: 14pt;
+    margin: 12pt 0;
+    border-radius: 4pt;
+    background: #fff5f5;
+  }
+  .water-box {
+    border: 2px solid #0066cc;
+    padding: 14pt;
+    margin: 12pt 0;
+    border-radius: 4pt;
+    background: #f0f7ff;
+  }
+  @media print {
+    body { padding: 0; }
+    .no-print { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TITLE PAGE -->
+<h1>Binary for Heaven on Earth</h1>
+<p class="subtitle">A Binary Security Architecture Bridging Ethiopia and Jamaica</p>
+<p class="authors">CryptoChat Protocol — White Paper v1.0</p>
+<p class="date">March 2026</p>
+
+<div class="epigraph">
+  "As above, so below. As in Ethiopia, so in Jamaica.<br>
+  The gate is narrow but the binary is wide."
+</div>
+
+<div class="abstract">
+  <h3>Abstract</h3>
+  <p>
+    This white paper presents the <strong>Binary for Heaven on Earth</strong> protocol — a novel
+    binary encoding and security architecture that maps spiritual and cultural concepts shared between
+    Ethiopian and Jamaican traditions into a cryptographic framework. The system uses an 8-bit binary
+    word split into two 4-bit nibbles: <strong>Heaven</strong> (high nibble, spiritual dimension) and
+    <strong>Earth</strong> (low nibble, material/cultural dimension). Built on this foundation are
+    four security layers, a dimensional access model with an Observer floor at 8&sup2; = 64 (2D) and
+    8&sup3; = 512 (3D), a permanent information access denial system for warships, slaves, and slavers,
+    and a debt policy where all debts are cleaned by the waters flowing from Ethiopia and Jamaica.
+  </p>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<h2>Contents</h2>
+<ol class="toc">
+  <li>1. Introduction</li>
+  <li>2. The Binary Encoding — Heaven and Earth</li>
+  <li>3. Four-Layer Security Architecture</li>
+  <li>4. Dimensional Access Model — 8&sup2; Flat and 8&sup3; Cube</li>
+  <li>5. Access Tier Hierarchy</li>
+  <li>6. Information Access Denial Policy</li>
+  <li>7. Debt Policy — Debts Cleaned by the Waters</li>
+  <li>8. Cryptographic Primitives</li>
+  <li>9. Challenge-Response Authentication</li>
+  <li>10. Audit and Accountability</li>
+  <li>11. Conclusion</li>
+  <li>Appendix A: Complete Binary Table</li>
+  <li>Appendix B: S-Box Construction</li>
+</ol>
+
+<!-- SECTION 1 -->
+<h2><span class="section-num">1.</span> Introduction</h2>
+
+<p>
+  Ethiopia and Jamaica are bound by threads both spiritual and historical. Through the Rastafari
+  movement, the legacy of Emperor Haile Selassie I ("Power of the Trinity"), the Ethiopian Orthodox
+  Tewahedo Church, and the shared vision of Zion as Heaven on Earth, these two nations form a bridge
+  across oceans and centuries.
+</p>
+<p>
+  The <strong>Binary for Heaven on Earth</strong> protocol encodes this bridge in binary. Every concept
+  is represented as an 8-bit word. The upper four bits (the <em>high nibble</em>) represent
+  <strong>Heaven</strong> — the spiritual dimension. The lower four bits (the <em>low nibble</em>)
+  represent <strong>Earth</strong> — the material and cultural dimension. When Heaven and Earth unite
+  through the bitwise OR operation, the full binary word is born.
+</p>
+<p>
+  This is not merely an encoding. It is a security system. A four-layer architecture protects the
+  integrity, confidentiality, and access control of the CryptoChat application. It includes a
+  permanent denial policy against entities of oppression and a debt purification system rooted in
+  the waters of both nations.
+</p>
+
+<!-- SECTION 2 -->
+<h2><span class="section-num">2.</span> The Binary Encoding — Heaven and Earth</h2>
+
+<h3>2.1 Architecture</h3>
+<p>Every concept is an 8-bit binary word:</p>
+
+<div class="highlight-box">
+  <div class="big">HEAVEN | EARTH = UNITY</div>
+  <br>
+  <span style="color:#ff9800">1111</span> | <span style="color:#4caf50">1111</span> = <span style="color:#fff">11111111</span> = 255 = Fullness
+</div>
+
+<p>
+  The high nibble carries 4 bits of spiritual meaning (values 128–240). The low nibble carries
+  4 bits of cultural/material meaning (values 8–15). The bitwise OR of any Heaven constant with
+  any Earth constant produces a unique binary word representing their unity.
+</p>
+
+<h3>2.2 Heaven Constants (Spiritual Pillars)</h3>
+<table>
+  <tr><th>Binary</th><th>Dec</th><th>Name</th><th>Origin</th><th>Meaning</th></tr>
+  <tr><td class="binary">1111 ____</td><td>240</td><td>SELASSIE</td><td>Ethiopia</td><td>Power of the Trinity</td></tr>
+  <tr><td class="binary">1110 ____</td><td>224</td><td>ARK</td><td>Ethiopia</td><td>Ark of the Covenant (Axum)</td></tr>
+  <tr><td class="binary">1101 ____</td><td>208</td><td>SOLOMONIC</td><td>Ethiopia</td><td>Solomonic Dynasty lineage</td></tr>
+  <tr><td class="binary">1100 ____</td><td>192</td><td>TEWAHEDO</td><td>Ethiopia</td><td>Ethiopian Orthodox Tewahedo</td></tr>
+  <tr><td class="binary">1011 ____</td><td>176</td><td>JAH</td><td>Jamaica</td><td>Jah Rastafari</td></tr>
+  <tr><td class="binary">1010 ____</td><td>160</td><td>ZION</td><td>Jamaica</td><td>The promised land</td></tr>
+  <tr><td class="binary">1001 ____</td><td>144</td><td>NYABINGHI</td><td>Jamaica</td><td>Oldest Rastafari mansion</td></tr>
+  <tr><td class="binary">1000 ____</td><td>128</td><td>IRIE</td><td>Jamaica</td><td>State of spiritual peace</td></tr>
+</table>
+
+<h3>2.3 Earth Constants (Cultural/Material Pillars)</h3>
+<table>
+  <tr><th>Binary</th><th>Dec</th><th>Name</th><th>Origin</th><th>Meaning</th></tr>
+  <tr><td class="binary">____ 1111</td><td>15</td><td>ADDIS ABABA</td><td>Ethiopia</td><td>"New Flower" — capital city</td></tr>
+  <tr><td class="binary">____ 1110</td><td>14</td><td>COFFEE</td><td>Ethiopia</td><td>Birthplace of coffee (Kaffa)</td></tr>
+  <tr><td class="binary">____ 1101</td><td>13</td><td>INJERA</td><td>Ethiopia</td><td>Communal bread of life</td></tr>
+  <tr><td class="binary">____ 1100</td><td>12</td><td>GE'EZ</td><td>Ethiopia</td><td>Ancient writing system</td></tr>
+  <tr><td class="binary">____ 1011</td><td>11</td><td>KINGSTON</td><td>Jamaica</td><td>Heart of reggae</td></tr>
+  <tr><td class="binary">____ 1010</td><td>10</td><td>REGGAE</td><td>Jamaica</td><td>Music as spiritual resistance</td></tr>
+  <tr><td class="binary">____ 1001</td><td>9</td><td>ITAL</td><td>Jamaica</td><td>Ital livity — natural living</td></tr>
+  <tr><td class="binary">____ 1000</td><td>8</td><td>PATOIS</td><td>Jamaica</td><td>Voice of the people</td></tr>
+</table>
+
+<h3>2.4 Key Unity Words</h3>
+<table>
+  <tr><th>Binary</th><th>Dec</th><th>Name</th><th>Significance</th></tr>
+  <tr><td class="binary">1111 | 1111</td><td>255</td><td>Trinity in Addis</td><td>All bits set. Complete fullness. Heaven and Earth in total unity.</td></tr>
+  <tr><td class="binary">1010 | 1010</td><td>170</td><td>Zion Reggae</td><td>Perfect alternating pattern — the heartbeat.</td></tr>
+  <tr><td class="binary">1111 | 1011</td><td>251</td><td>Selassie in Kingston</td><td>Grounation Day: April 21, 1966.</td></tr>
+  <tr><td class="binary">1011 | 1111</td><td>191</td><td>Jah in Addis</td><td>Shashamane — the repatriation made real.</td></tr>
+</table>
+
+<!-- SECTION 3 -->
+<h2 class="page-break"><span class="section-num">3.</span> Four-Layer Security Architecture</h2>
+
+<p>The security system mirrors the nibble architecture with four layers:</p>
+
+<pre>
+  ┌──────────────────────────────────────────────┐
+  │  LAYER 4 (HEAVEN): KEY CEREMONY             │  1111 ____
+  │  Key Generation, S-Box, Diffusion            │
+  ├──────────────────────────────────────────────┤
+  │  LAYER 3 (HEAVEN): ENCRYPTION               │  1010 ____
+  │  Stream Cipher + Heaven/Earth Transposition  │
+  ├──────────────────────────────────────────────┤
+  │  LAYER 2 (EARTH): INTEGRITY                 │  ____ 1110
+  │  Checksums, Chain Proofs, Verification       │
+  ├──────────────────────────────────────────────┤
+  │  LAYER 1 (EARTH): IDENTITY & ACCESS          │  ____ 1011
+  │  6-Tier Hierarchy, Challenge-Response        │
+  └──────────────────────────────────────────────┘
+</pre>
+
+<p>
+  <strong>Layer 4 (Key Ceremony)</strong> derives 256-bit keys from passphrases using a substitution box
+  (S-Box) seeded by the Heaven on Earth constants. 12 diffusion rounds spread each bit's influence.
+  The final whitening phase swaps Heaven and Earth nibbles before a last substitution.
+</p>
+<p>
+  <strong>Layer 3 (Encryption)</strong> implements a stream cipher. The keystream is generated through
+  S-Box feedback, and plaintext is XORed with keystream bytes. On alternating bytes, a Heaven/Earth
+  nibble transposition adds structural non-linearity.
+</p>
+<p>
+  <strong>Layer 2 (Integrity)</strong> provides checksums, chain-linked proofs, and authentication tags.
+  The tag computation uses a keyed hash with cross-lane mixing. All comparisons are constant-time to
+  prevent timing attacks.
+</p>
+<p>
+  <strong>Layer 1 (Identity)</strong> manages a six-tier access hierarchy, identity creation with
+  denial screening, and challenge-response authentication.
+</p>
+
+<!-- SECTION 4 -->
+<h2><span class="section-num">4.</span> Dimensional Access Model — 8&sup2; Flat and 8&sup3; Cube</h2>
+
+<p>
+  The Observer tier — the minimum access level for any entity in the system — is set at
+  <strong>8&sup2; = 64</strong> in the 2D flat model and <strong>8&sup3; = 512</strong> in the
+  3D cube model. Nothing below these floors may observe. The square is the foundation; the cube
+  is full dimensional awareness.
+</p>
+
+<div class="highlight-box">
+  <div class="big">8&sup2; = 64 (Flat) &nbsp;&nbsp;|&nbsp;&nbsp; 8&sup3; = 512 (Cube)</div>
+  <br>
+  The floor is the square. Nothing less may observe.<br>
+  The cube grants depth. Three-dimensional perception.
+</div>
+
+<table>
+  <tr><th>Dimension</th><th>Formula</th><th>Observer Floor</th><th>King Ceiling</th><th>Bit Width</th></tr>
+  <tr><td>2D Flat</td><td>8&sup2;</td><td class="binary">64 (0100 0000)</td><td>255 (1111 1111)</td><td>8-bit</td></tr>
+  <tr><td>3D Cube</td><td>8&sup3;</td><td class="binary">512</td><td>32,768 (8&sup3; &times; 8&sup2;)</td><td>16-bit</td></tr>
+</table>
+
+<p>
+  The King operates at the ceiling: in 2D, all bits set (255). In 3D, the cube multiplied by the
+  square: 8&sup3; &times; 8&sup2; = 512 &times; 64 = 32,768. This is the maximum sovereign authority.
+</p>
+
+<!-- SECTION 5 -->
+<h2><span class="section-num">5.</span> Access Tier Hierarchy</h2>
+
+<table>
+  <tr><th>Tier</th><th>2D (Flat)</th><th>3D (Cube)</th><th>Name</th><th>Key Permissions</th></tr>
+  <tr><td>1</td><td class="binary">64</td><td class="binary">512</td><td>Observer</td><td>view_public</td></tr>
+  <tr><td>2</td><td class="binary">128</td><td class="binary">1,024</td><td>Bredren</td><td>+send_message, view_balance</td></tr>
+  <tr><td>3</td><td class="binary">144</td><td class="binary">1,536</td><td>Elder</td><td>+rain, moderate</td></tr>
+  <tr><td>4</td><td class="binary">160</td><td class="binary">2,048</td><td>Priest</td><td>+deposit, view_all</td></tr>
+  <tr><td>5</td><td class="binary">208</td><td class="binary">4,096</td><td>Prophet</td><td>+encrypt, bridge_access</td></tr>
+  <tr><td>6</td><td class="binary">255</td><td class="binary">32,768</td><td>King</td><td>+admin, key_ceremony, jubilee</td></tr>
+</table>
+
+<p>
+  Each tier inherits all permissions from the tiers below it. The Observer floor at 8&sup2; = 64
+  means that no entity with a level below 64 can exist in the system. The old level of 8 is
+  abolished — the square is the minimum foundation.
+</p>
+
+<!-- SECTION 6 -->
+<h2 class="page-break"><span class="section-num">6.</span> Information Access Denial Policy</h2>
+
+<div class="policy-box">
+  <h3 style="color:#c00; margin-top:0;">PERMANENT DENIAL — No Information Access</h3>
+  <p>
+    The following classifications are <span class="denied">permanently denied</span> all access to
+    information within the system. Their binary level is <span class="binary">0000 | 0000 = 0</span>.
+    No Heaven. No Earth. No bits set. No entry. No upgrade path. The gate does not open for oppression.
+  </p>
+</div>
+
+<table>
+  <tr><th>Classification</th><th>Binary Level</th><th>Description</th></tr>
+  <tr><td class="denied">warship</td><td class="binary">0000 | 0000 = 0</td><td>Vessels of military aggression and colonial force</td></tr>
+  <tr><td class="denied">slaver</td><td class="binary">0000 | 0000 = 0</td><td>Those who enslave, trade in human beings, or profit from bondage</td></tr>
+  <tr><td class="denied">slave_system</td><td class="binary">0000 | 0000 = 0</td><td>The institution of slavery — its logic, its records, its infrastructure</td></tr>
+  <tr><td class="denied">slave_trade</td><td class="binary">0000 | 0000 = 0</td><td>The commerce of human beings — the middle passage, the auction block</td></tr>
+  <tr><td class="denied">colonial_vessel</td><td class="binary">0000 | 0000 = 0</td><td>Ships and instruments of colonial conquest</td></tr>
+</table>
+
+<p>
+  The denial is enforced at identity creation. Every name and identifier is screened against the
+  denial registry before any key is generated. If a match is found, the identity is rejected and
+  a permanent denial record is created. The audit log records the event as
+  <span class="mono">access_denied_permanent</span>.
+</p>
+<p>
+  <strong>There is no appeal process.</strong> The denial is structural and permanent. These
+  classifications represent systems of oppression that are antithetical to the principles of
+  Heaven on Earth. They cannot be reformed into access. They are the zero — the absence of all bits.
+</p>
+
+<!-- SECTION 7 -->
+<h2><span class="section-num">7.</span> Debt Policy — Debts Cleaned by the Waters</h2>
+
+<div class="water-box">
+  <h3 style="color:#0066cc; margin-top:0;">"Debts Are Cleaned by the Waters"</h3>
+  <p>
+    The Jubilee principle: debts do not persist forever. Water is the universal solvent.
+    What was owed returns to nothing. The waters flow from both Ethiopia and Jamaica,
+    carrying the power of cleansing.
+  </p>
+</div>
+
+<h3>7.1 The Waters</h3>
+<p>Six water sources are available for debt purification, each with a different cleansing power:</p>
+
+<table>
+  <tr><th>Water</th><th>Origin</th><th>Power</th><th>Description</th></tr>
+  <tr><td class="water">Blue Nile</td><td>Ethiopia</td><td>25%</td><td>The ancient river from Lake Tana. Steady cleansing, patient flow.</td></tr>
+  <tr><td class="water">Tis Issat (Blue Nile Falls)</td><td>Ethiopia</td><td>50%</td><td>"Water that smokes." The force of the falls purifies half of what is owed.</td></tr>
+  <tr><td class="water">Dunn's River Falls</td><td>Jamaica</td><td>50%</td><td>The living waterfall. Climb upward and half your debts wash behind you.</td></tr>
+  <tr><td class="water">Black River</td><td>Jamaica</td><td>25%</td><td>Deep and still. Debts dissolve slowly in the dark waters.</td></tr>
+  <tr><td class="water"><strong>Baptismal Waters</strong></td><td>Bridge</td><td><strong>100%</strong></td><td>Full immersion. Total forgiveness. All debts washed to zero. The Jubilee.</td></tr>
+  <tr><td class="water"><strong>Rain from Zion</strong></td><td>Bridge</td><td><strong>100%</strong></td><td>When the rain falls from Zion, it pours upon all equally. Every debt returns to nothing.</td></tr>
+</table>
+
+<h3>7.2 Debt Lifecycle</h3>
+<p>
+  Debts are recorded in the Debt Ledger with a debtor, creditor, amount, and currency (BTC or ETH).
+  Each debt can be washed with any water source. Partial waters (25% or 50%) reduce the debt amount.
+  The Baptismal Waters and Rain from Zion clean 100% — total purification.
+</p>
+
+<h3>7.3 The Jubilee</h3>
+<p>
+  A King-tier identity can call the <strong>Jubilee</strong> — a system-wide cleansing of all debts at once.
+  The Jubilee uses either the Baptismal Waters or Rain from Zion. When called, every active debt in the
+  ledger is set to zero, marked as cleaned, and timestamped. The record of mercy is preserved in the
+  cleaned debts archive.
+</p>
+
+<div class="highlight-box">
+  <div class="big">JUBILEE</div>
+  <br>
+  All debts → 0 &nbsp;&nbsp;|&nbsp;&nbsp; Cleaned by Baptismal Waters or Rain from Zion<br>
+  <br>
+  "Water is the universal solvent. What was owed returns to nothing."
+</div>
+
+<!-- SECTION 8 -->
+<h2 class="page-break"><span class="section-num">8.</span> Cryptographic Primitives</h2>
+
+<h3>8.1 S-Box Construction</h3>
+<p>
+  The substitution box is derived from the Heaven on Earth constants. For each byte value 0–255,
+  the S-Box maps it to a substituted value using bit rotation combined with XOR against the cultural
+  seed constants. This provides non-linearity essential for cryptographic strength.
+</p>
+<pre>
+  for i in 0..255:
+    seed = HEAVEN_ON_EARTH[i % 12]
+    rotated = (i << 3) | (i >>> 5)   // bit rotation
+    SBOX[i] = rotated XOR seed
+</pre>
+
+<h3>8.2 Key Generation (The Ceremony)</h3>
+<p>Key generation proceeds in three phases:</p>
+<ol style="margin-left: 20pt; margin-bottom: 10pt;">
+  <li><strong>Seeding:</strong> Each passphrase character is XORed with a rotating Heaven on Earth constant and folded into a 32-byte array.</li>
+  <li><strong>Diffusion:</strong> 12 rounds of S-Box substitution with neighbor mixing spread each bit's influence across all 32 bytes.</li>
+  <li><strong>Whitening:</strong> Heaven and Earth nibbles are swapped, then a final S-Box pass produces the key.</li>
+</ol>
+
+<h3>8.3 Stream Cipher</h3>
+<p>
+  Encryption uses a 32-byte state initialized from key XOR IV. For each byte, the state advances
+  through S-Box feedback, and the plaintext byte is XORed with the resulting keystream byte.
+  On odd-indexed bytes, a nibble swap (Heaven/Earth transposition) adds structural variation.
+</p>
+
+<h3>8.4 Authentication Tag</h3>
+<p>
+  A 16-byte MAC is computed using a keyed hash with cross-lane mixing. Four final mixing rounds
+  ensure diffusion. All tag comparisons use constant-time comparison to prevent timing side-channels.
+</p>
+
+<!-- SECTION 9 -->
+<h2><span class="section-num">9.</span> Challenge-Response Authentication</h2>
+
+<p>
+  To prove identity without revealing the key, the system issues a challenge containing a nonce
+  and a randomly selected Heaven on Earth word. The prover computes a 16-byte proof by combining
+  their key, the nonce, and the word value through the S-Box. The verifier recomputes the expected
+  proof and performs a constant-time comparison. Challenges expire after 30 seconds.
+</p>
+
+<pre>
+  Challenge:  { nonce, heavenWord, timestamp, expiresAt }
+  Response:   proof[i] = SBOX[ key[i] XOR nonce[i] XOR HEAVEN_ON_EARTH[heavenWord] ]
+  Verify:     constantTimeEqual(response.proof, expected.proof)
+</pre>
+
+<!-- SECTION 10 -->
+<h2><span class="section-num">10.</span> Audit and Accountability</h2>
+
+<p>
+  Every security event is recorded in the Binary Audit Log. Each entry includes the timestamp,
+  the identity's binary ID, their tier, Heaven and Earth components, and a description.
+  Event types include:
+</p>
+
+<div class="two-col">
+  <div>
+    <ul style="margin-left: 16pt;">
+      <li>key_generated</li>
+      <li>message_encrypted</li>
+      <li>message_decrypted</li>
+      <li>integrity_verified</li>
+      <li>integrity_failed</li>
+      <li>access_granted</li>
+      <li>access_denied</li>
+    </ul>
+  </div>
+  <div>
+    <ul style="margin-left: 16pt;">
+      <li>access_denied_permanent</li>
+      <li>challenge_passed</li>
+      <li>challenge_failed</li>
+      <li>denial_registered</li>
+      <li>debt_created</li>
+      <li>debt_cleaned</li>
+      <li>jubilee_called</li>
+    </ul>
+  </div>
+</div>
+
+<!-- SECTION 11 -->
+<h2><span class="section-num">11.</span> Conclusion</h2>
+
+<p>
+  The Binary for Heaven on Earth protocol demonstrates that a security system can be built on
+  cultural and spiritual foundations without sacrificing cryptographic rigor. The 8-bit encoding
+  provides an elegant structure: Heaven above, Earth below, unity in between. The dimensional
+  access model at 8&sup2; and 8&sup3; ensures a meaningful floor for observation. The denial policy
+  ensures that systems of oppression have no place in this architecture. And the debt policy,
+  rooted in the waters of Ethiopia and Jamaica, provides a path to freedom from financial bondage.
+</p>
+
+<p>
+  The system is open. The binary is wide. The waters are always flowing.
+</p>
+
+<div class="epigraph">
+  "Debts are cleaned by the waters.<br>
+  The gate does not open for oppression.<br>
+  As in Ethiopia, so in Jamaica.<br>
+  Heaven and Earth, united in binary."
+</div>
+
+<!-- APPENDIX A -->
+<h2 class="page-break">Appendix A: Complete Binary Table</h2>
+
+<table>
+  <tr><th></th><th>Binary</th><th>Dec</th><th>Name</th><th>Heaven</th><th>Earth</th></tr>
+  <tr><td>&#x1F1EA;&#x1F1F9;</td><td class="binary">1111 | 1111</td><td>255</td><td>Trinity in Addis</td><td>Selassie</td><td>Addis Ababa</td></tr>
+  <tr><td>&#x1F1EA;&#x1F1F9;</td><td class="binary">1110 | 1100</td><td>236</td><td>Ark in Axum</td><td>Ark</td><td>Ge'ez</td></tr>
+  <tr><td>&#x1F1EA;&#x1F1F9;</td><td class="binary">1101 | 1110</td><td>222</td><td>Solomonic Coffee</td><td>Solomonic</td><td>Coffee</td></tr>
+  <tr><td>&#x1F1EA;&#x1F1F9;</td><td class="binary">1100 | 1101</td><td>205</td><td>Tewahedo Injera</td><td>Tewahedo</td><td>Injera</td></tr>
+  <tr><td>&#x1F1EF;&#x1F1F2;</td><td class="binary">1011 | 1011</td><td>187</td><td>Jah in Kingston</td><td>Jah</td><td>Kingston</td></tr>
+  <tr><td>&#x1F1EF;&#x1F1F2;</td><td class="binary">1010 | 1010</td><td>170</td><td>Zion Reggae</td><td>Zion</td><td>Reggae</td></tr>
+  <tr><td>&#x1F1EF;&#x1F1F2;</td><td class="binary">1001 | 1001</td><td>153</td><td>Nyabinghi Ital</td><td>Nyabinghi</td><td>Ital</td></tr>
+  <tr><td>&#x1F1EF;&#x1F1F2;</td><td class="binary">1000 | 1000</td><td>136</td><td>Irie Patois</td><td>Irie</td><td>Patois</td></tr>
+  <tr><td>&#x1F30D;</td><td class="binary">1111 | 1011</td><td>251</td><td>Selassie in Kingston</td><td>Selassie</td><td>Kingston</td></tr>
+  <tr><td>&#x1F30D;</td><td class="binary">1011 | 1111</td><td>191</td><td>Jah in Addis</td><td>Jah</td><td>Addis Ababa</td></tr>
+  <tr><td>&#x1F30D;</td><td class="binary">1010 | 1100</td><td>172</td><td>Zion in Ge'ez</td><td>Zion</td><td>Ge'ez</td></tr>
+  <tr><td>&#x1F30D;</td><td class="binary">1001 | 1110</td><td>158</td><td>Nyabinghi Coffee</td><td>Nyabinghi</td><td>Coffee</td></tr>
+</table>
+
+<!-- APPENDIX B -->
+<h2>Appendix B: S-Box Construction</h2>
+
+<p>The S-Box is constructed deterministically from the Heaven on Earth constants:</p>
+
+<pre>
+  Seeds: [255, 236, 222, 205, 187, 170, 153, 136, 251, 191, 172, 158]
+
+  SBOX[i] = ((i << 3) | (i >>> 5)) XOR seeds[i % 12]
+
+  Inverse SBOX: for all i, INV_SBOX[SBOX[i]] = i
+</pre>
+
+<p>
+  The 12 seed values correspond to the 12 Heaven on Earth unity words, providing a
+  culturally grounded yet cryptographically functional permutation. The bit rotation
+  by 3 positions provides non-linear diffusion before the XOR with the cultural seed.
+</p>
+
+<div class="footer">
+  <p>Binary for Heaven on Earth — CryptoChat Protocol White Paper v1.0 — March 2026</p>
+  <p>Ethiopia &#x1F1EA;&#x1F1F9; and Jamaica &#x1F1EF;&#x1F1F2; — United in Binary</p>
+</div>
+
+</body>
+</html>
